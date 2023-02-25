@@ -1,4 +1,4 @@
-package ru.khomyakov;
+package ru.khomyakov.AnnoApp;
 
 public class Box {
     private String name;
@@ -35,8 +35,8 @@ public class Box {
         this.amount = amount;
     }
 
-    @MyAnno(path = 25)
-    public String getValue(int value) {
+    @MyAnno(path = "arrayOne")
+    public String getValue(Integer value) {
         return String.format("%s: value = %d", name, value);
     }
 }
