@@ -36,7 +36,7 @@ public class Box {
     }
 
     @MyAnno(path = "arrayOne")
-    public String getValue(Integer intValue, String stringValue) {
-        return String.format("%s: value = %d and line = %s", name, intValue, stringValue);
+    public String getValue(Integer intValue, String stringValue, Element element) {
+        return name + ": value = " + intValue +" and line = " + stringValue + " and other = " + element;
     }
 }

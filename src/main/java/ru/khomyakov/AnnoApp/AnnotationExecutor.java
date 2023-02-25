@@ -1,6 +1,7 @@
 package ru.khomyakov.AnnoApp;
 
 import java.io.*;
+import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -41,10 +42,18 @@ public class AnnotationExecutor {
         Class<?>[] parameterTypes = method.getParameterTypes();
         for (int i = 0; i < parameterTypes.length; i++) {
             Class<?> parameterType = parameterTypes[i];
-            if (parameterType == int.class || parameterType == Integer.class) {
+            if (parameterType == String.class) {
+                castedParamsArray[i] = paramsArray[i];
+            } else if (parameterType == int.class || parameterType == Integer.class) {
                 castedParamsArray[i] = Integer.parseInt(paramsArray[i]);
             } else {
-                castedParamsArray[i] = paramsArray[i];
+                try {
+                    Constructor<?> constructor = parameterType.getConstructor(String.class);
+                    castedParamsArray[i] = constructor.newInstance(paramsArray[i]);
+                } catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException | InstantiationException e) {
+                    e.printStackTrace();
+                }
+
             }
         }
         return castedParamsArray;
