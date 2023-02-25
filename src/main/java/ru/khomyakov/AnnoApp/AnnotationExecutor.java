@@ -20,7 +20,6 @@ public class AnnotationExecutor {
                     for (String param : params) {
                         Object[] methodParams = getMethodParams(method, param);
                         executeMethod(method, obj, methodParams);
-//                        method.invoke(obj, methodParams);
                     }
                 }
             }
@@ -44,6 +43,8 @@ public class AnnotationExecutor {
             Class<?> parameterType = parameterTypes[i];
             if (parameterType == int.class || parameterType == Integer.class) {
                 castedParamsArray[i] = Integer.parseInt(paramsArray[i]);
+            } else {
+                castedParamsArray[i] = paramsArray[i];
             }
         }
         return castedParamsArray;
