@@ -1,4 +1,4 @@
-package ru.khomyakov.AnnoApp;
+package ru.khomyakov.AnnoApp.entities;
 
 public class Element {
     private String name;

@@ -1,4 +1,6 @@
-package ru.khomyakov.AnnoApp;
+package ru.khomyakov.AnnoApp.executors;
+
+import ru.khomyakov.AnnoApp.annotations.Resource;
 
 import java.io.*;
 import java.lang.reflect.Constructor;
@@ -9,19 +11,21 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Properties;
 
-public class AnnotationExecutor {
+public class ResourceAnnotationExecutor {
     public static void execute(Object obj) throws InvocationTargetException, IllegalAccessException {
         Method[] declaredMethods = obj.getClass().getDeclaredMethods();
         for (Method method : declaredMethods) {
-            if (method.isAnnotationPresent(MyAnno.class)) {
-                MyAnno anno = method.getAnnotation(MyAnno.class);
+            if (method.isAnnotationPresent(Resource.class)) {
+                Resource anno = method.getAnnotation(Resource.class);
                 String path = anno.path();
                 List<String> params = getParamsFromProperty(path);
-                if (params.size() > 0) {
+                if (params != null) {
                     for (String param : params) {
                         Object[] methodParams = getMethodParams(method, param);
                         executeMethod(method, obj, methodParams);
                     }
+                } else {
+                    executeMethod(method, obj, null);
                 }
             }
         }
@@ -31,6 +35,7 @@ public class AnnotationExecutor {
         Class<?> returnType = method.getReturnType();
         if(returnType == void.class) {
             method.invoke(obj, methodParams);
+            System.out.println(method.getName() + " is invoked");
         } else {
             System.out.println(method.invoke(obj, methodParams));
         }
@@ -40,6 +45,9 @@ public class AnnotationExecutor {
         String[] paramsArray = param.split(" ");
         Object[] castedParamsArray = new Object[paramsArray.length];
         Class<?>[] parameterTypes = method.getParameterTypes();
+        if (parameterTypes.length == 0){
+            return null;
+        }
         for (int i = 0; i < parameterTypes.length; i++) {
             Class<?> parameterType = parameterTypes[i];
             if (parameterType == String.class) {
@@ -67,11 +75,12 @@ public class AnnotationExecutor {
 
             properties.load(is);
             pathToParams = properties.getProperty(path);
-//            System.out.println(pathToParams);
 
         } catch (IOException e) {
             System.out.println(Arrays.toString(e.getStackTrace()));
         }
+
+        if (pathToParams == null) return null;
 
         try(BufferedReader reader = new BufferedReader(new FileReader(pathToParams))) {
             String line = reader.readLine();
